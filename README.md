@@ -1,4 +1,4 @@
-# Diabetes Dataset Analysis with Random Forest and SMOTE
+# Diabetes Dataset Analysis with Random Forest with and without SMOTE
 
 ## Overview
 
