@@ -1,0 +1,44 @@
+import pandas as pd
+from imblearn.over_sampling import SMOTE
+
+
+
+# Load the preprocessed data
+preprocess_diabetes_data = pd.read_csv('preprocess_diabetes_data.csv')
+
+# Assuming 'Diabetes_012' is your target variable
+X = preprocess_diabetes_data.drop('Diabetes_012', axis=1)
+y = preprocess_diabetes_data['Diabetes_012']
+
+# Convert categorical features to numerical using one-hot encoding
+X = pd.get_dummies(X, drop_first=True)
+
+# Apply SMOTE to balance the dataset
+smote = SMOTE(random_state=42)
+X_resampled, y_resampled = smote.fit_resample(X, y)
+#from imblearn.combine import SMOTETomek
+
+#smote_tomek = SMOTETomek(random_state=42)
+#X_resampled, y_resampled = smote_tomek.fit_resample(X, y)
+# Split the resampled data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42)
+
+
+# Initialize and train the RandomForestClassifier
+rf_classifier = RandomForestClassifier(random_state=42) # You can adjust hyperparameters here
+rf_classifier.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = rf_classifier.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy}")
+print(classification_report(y_test, y_pred))
+
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+cm = confusion_matrix(y_test, y_pred)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=rf_classifier.classes_)
+disp.plot()
+plt.show()
